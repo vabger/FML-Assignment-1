@@ -25,7 +25,7 @@ def toss(num_trials):
 def plot_hist(trial):
     '''
     trial: vector of values for a particular trial.
-
+     hi
     plot the histogram for each trial.
     Use 'axs' from plt.subplots() function to create histograms. You can search about how to use it to plot histograms.
 
