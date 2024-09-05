@@ -51,13 +51,16 @@ class LinearRegressionBatchGD:
         # Complete the inner "for" loop to calculate the gradient of loss w.r.t weights, i.e. dw and update the weights
         # You must update the `prev_weights` variable accordingly to invoke early stopping.
         # NOTE: You should use "compute_gradient()"  function to calculate gradient.
-
+        prev_weights = prev_weights - self.learning_rate*self.compute_gradient(X_batch,y_batch,prev_weights)
 
       # After the inner "for" loop ends, calculate loss on the entire data using "compute_rmse_loss()" function and add the loss of each epoch to the "error list"
+      self.error_list.append(self.compute_rmse_loss(X,y,prev_weights))
 
       if np.linalg.norm(self.weights - prev_weights) < 1e-5:
         break
     
+    self.weights = prev_weights
+
     if plot:
         plot_loss(self.error_list, epoch + 1)
 
@@ -72,6 +75,8 @@ class LinearRegressionBatchGD:
       2D numpy array of predicted target values. Dimensions (n x 1)
     '''
     # Write your code here
+    y_predict = X @ self.weights
+    return y_predict
     raise NotImplementedError()
 
   def compute_rmse_loss(self, X, y, weights):
@@ -87,6 +92,8 @@ class LinearRegressionBatchGD:
       loss : 2D numpy array of RMSE loss. float
     '''
     # Write your code here
+    n = X.shape[0]
+    return (np.linalg.norm(y - (X @ weights))**2/n)**0.5
     raise NotImplementedError()
 
   def compute_gradient(self, X, y, weights):
@@ -103,6 +110,11 @@ class LinearRegressionBatchGD:
     '''
     # Write your code here.
     # Note: Make sure you divide the gradient (dw) by the total number of training instances before returning to prevent "exploding gradients".
+    n = X.shape[0]
+    dw = (X.T @ X) @ weights - (X.T @ y)
+    return dw/n
+
+
     raise NotImplementedError()
 
 def plot_loss(error_list, total_epochs):
@@ -116,6 +128,18 @@ def plot_loss(error_list, total_epochs):
     None
   '''
   # Complete this function to plot the graph of losses stored in model's "error_list"
+  plt.figure(1)
+  epochs = np.arange(total_epochs)
+  plt.plot(epochs,error_list)
+
+  plt.xlabel('Epochs')
+  plt.ylabel('RMSE loss')
+  plt.title('Epoch vs Loss')
+
+
+  plt.show()
+  
+  return None
   raise NotImplementedError()
 
 def plot_learned_equation(X, y, y_hat):
@@ -130,8 +154,21 @@ def plot_learned_equation(X, y, y_hat):
     Returns:
       None
     '''
+
     # Plot a 2d plot, with only  X[:,1] on x-axis (Think on why you can ignore X[:, 0])
     # Use y_hat to plot the line. DO NOT use y.
+    
+    plt.figure(2)
+    plt.scatter(X[:,1], y, color='blue', s=10) 
+    plt.plot(X[:,1], y_hat, color='red', linewidth=2)
+
+    plt.xlabel('X')
+    plt.ylabel('y')
+    plt.title('Plot for the equation of the form: y = w0 + w1*x')
+
+    plt.show() 
+
+    return None
     raise NotImplementedError()
 
 ############################################

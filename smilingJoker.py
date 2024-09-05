@@ -5,6 +5,7 @@ import pandas as pd
 np.random.seed(2024)
 
 from closedForm import LinearRegressionClosedForm
+from closedForm import plot_learned_equation
 
 def transform_input(x):
     '''
@@ -18,6 +19,9 @@ def transform_input(x):
       
     '''
     # Write your code here
+    columns = [x**0,x**2,np.cos(x)]
+    X_transformed = np.column_stack(columns)
+    return X_transformed
     raise NotImplementedError()
     
 def read_dataset(filepath):
@@ -38,7 +42,22 @@ def read_dataset(filepath):
       y_test: 2D numpy array of target values for testing. Dimensions ((n-n') x 1)
       
     '''
-    # Write your code here
+
+    df = pd.read_csv(filepath)
+    x = df['x'].values
+    y = df['y'].values
+
+    n = len(x)
+
+    split_index = int(0.9*n)
+
+    X_train = x[:split_index]
+    X_test = x[split_index:]
+
+    y_train = y[:split_index]
+    y_test = y[split_index:]
+
+    return X_train,y_train,X_test,y_test
     raise NotImplementedError()
 
 
@@ -93,6 +112,7 @@ if __name__ == '__main__':
     print(RESET + "Performing input transformation: ", end="")
     try:
         X_train = transform_input(X_train)
+        # X = X_test
         X_test = transform_input(X_test)
         print(GREEN + "done")
     except Exception as e:
@@ -113,6 +133,7 @@ if __name__ == '__main__':
     print(RESET + "Checking closeness: ", end="")
     try:
         y_hat = linear_reg.predict(X_test)
+        # plt.scatter(X,y_hat,color='green')
         if np.allclose(y_hat, y_test, atol=1e-02):
           print(GREEN + "done")
         else:
